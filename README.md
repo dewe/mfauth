@@ -11,6 +11,8 @@ Dependencies:
 * `op`: https://support.1password.com/command-line/
 * `awsmfa`: https://pypi.org/project/awsmfa/
 
+The script assumes default setup for `awsmfa`, using the default aws profile. See `awsmfa` docs, section "Getting started".
+
 Configure environment variables:
 
 * `OP_SUBDOMAIN` - one password subdomain for authentication, see 1password CLI docs.
