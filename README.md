@@ -15,5 +15,11 @@ The script assumes default setup for `awsmfa`, using the default aws profile. Se
 
 Configure environment variables:
 
-* `OP_SUBDOMAIN` - one password subdomain for authentication, see 1password CLI docs.
-* `OP_ITEM_NAME` - the name of the 1password item with mfa code set up.
+* `OP_SUBDOMAIN` - 1password subdomain for authentication, see [1password CLI docs](https://support.1password.com/command-line/#sign-in-or-out).
+* `OP_ITEM_NAME` - optional: the 1password item that has an MFA code, specified as either an [item name or uuid](https://support.1password.com/command-line/#appendix-specifying-objects).
+
+For convenience, the 1Password item name or uuid can be provided as an argument. This will override the environment variable setting.
+
+```bash
+mfauth "My 1password login item name"
+```
