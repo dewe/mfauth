@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # Examples:
+#
+# Auth with default identity
 # mfauth "My 1password item" 
+#
+# Assume role
 # mfauth "My 1password item" "arn:aws:iam::123456789012:role/MyFunkyRole"
 
 set -e
@@ -9,6 +13,9 @@ set -e
 # get arguments, or default values from environment variables
 OP_ITEM_NAME=${1:-$OP_ITEM_NAME}
 AWS_ROLE_ARN=${2:-$AWS_ROLE_ARN}
+
+# default duration value in seconds
+AWS_MFA_DURATION=${AWS_MFA_DURATION:-3600}
 
 main() {
     verify_dependency op
@@ -18,18 +25,18 @@ main() {
     ensure_var "$OP_ITEM_NAME" "Missing 1Password item name as first argument or \$OP_ITEM_NAME"
     ensure_var "$OP_SUBDOMAIN" "Missing 1Password subdomain as \$OP_SUBDOMAIN"
 
-    duration=$(get_duration_arg)
+    assume_role=$(get_role_and_duration)
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM_NAME")
-    awsmfa $duration --token-code $mfa "$AWS_ROLE_ARN"
+    awsmfa $duration --token-code $mfa $assume_role
 }
 
 get_mfa() {
     op signin "$1" --output=raw | op get totp "$2"
 }
 
-get_duration_arg() {
+get_role_and_duration() {
     if [ -n "$AWS_ROLE_ARN" ]; then
-        echo -d 3600
+        echo -d $AWS_MFA_DURATION $AWS_ROLE_ARN
     fi
 }
 
