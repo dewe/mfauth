@@ -6,15 +6,17 @@ Stuff for AWS
 
 Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-factor auth with 1Password.
 
-Dependencies:
+### Dependencies
 
 * `op`: https://support.1password.com/command-line/
 * `aws`: https://aws.amazon.com/cli/
 * `awsmfa`: https://pypi.org/project/awsmfa/
 
-The script assumes default setup for `awsmfa`, using the default aws profile. See `awsmfa` docs, section "Getting started".
+### Setup `awsmfa`
 
-Configure environment variables:
+The script assumes that `awsmfa` has been setup as described in [awsmfa docs, getting started](https://github.com/dcoker/awsmfa#getting-started).
+
+### Configure environment variables
 
 * `OP_SUBDOMAIN` - 1password subdomain for authentication, see [1password CLI docs](https://support.1password.com/command-line/#sign-in-or-out).
 * `OP_ITEM_NAME` - optional: the 1password item that has an MFA code, specified as either an [item name or uuid](https://support.1password.com/command-line/#appendix-specifying-objects).
