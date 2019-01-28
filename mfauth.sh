@@ -1,13 +1,14 @@
 #!/bin/bash
 
-# op cli - https://support.1password.com/command-line/
-# awsmfa util - https://pypi.org/project/awsmfa/
-# aws cli - https://aws.amazon.com/cli/
+# Examples:
+# mfauth "My 1password item" 
+# mfauth "My 1password item" "arn:aws:iam::123456789012:role/MyFunkyRole"
 
 set -e
 
-# get first argument or environment variable
+# get arguments, or default values from environment variables
 OP_ITEM_NAME=${1:-$OP_ITEM_NAME}
+AWS_ROLE_ARN=${2:-$AWS_ROLE_ARN}
 
 main() {
     verify_dependency op
@@ -17,12 +18,19 @@ main() {
     ensure_var "$OP_ITEM_NAME" "Missing 1Password item name as first argument or \$OP_ITEM_NAME"
     ensure_var "$OP_SUBDOMAIN" "Missing 1Password subdomain as \$OP_SUBDOMAIN"
 
+    duration=$(get_duration_arg)
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM_NAME")
-    awsmfa --token-code $mfa 
+    awsmfa $duration --token-code $mfa "$AWS_ROLE_ARN"
 }
 
 get_mfa() {
     op signin "$1" --output=raw | op get totp "$2"
+}
+
+get_duration_arg() {
+    if [ -n "$AWS_ROLE_ARN" ]; then
+        echo -d 3600
+    fi
 }
 
 # if $1 is zero-length string, abort with message $2 
