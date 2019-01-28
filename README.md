@@ -9,6 +9,7 @@ Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-facto
 Dependencies:
 
 * `op`: https://support.1password.com/command-line/
+* `aws`: https://aws.amazon.com/cli/
 * `awsmfa`: https://pypi.org/project/awsmfa/
 
 The script assumes default setup for `awsmfa`, using the default aws profile. See `awsmfa` docs, section "Getting started".
