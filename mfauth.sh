@@ -1,53 +1,66 @@
 #!/bin/bash
 
+## TODO:
+# subdomain as parameter
+# make assume role optional again
+# add help option
+
 set -e
 
-# positional args array
-args=( )
-
-# parse args
-while (( "$#" )); do
-  case "$1" in
-    -d|--duration)
-      AWS_MFA_DURATION=$2
-      shift 2
-      ;;
-    --) # end argument parsing
-      shift
-      break
-      ;;
-    -*|--*=) # unsupported flags
-      echo Error: Unsupported argument $1 >&2
-      usage
-      exit 1
-      ;;
-    *) # preserve positional arguments
-      args+=( "$1" )
-      shift
-      ;;
-  esac
-done
-
-# set positional arguments in their proper place
-set -- "${args[@]}"
-
-# get arguments, or default values from environment variables
-OP_ITEM_NAME=${1:-$OP_ITEM_NAME}
-AWS_ROLE_ARN=${2:-$AWS_ROLE_ARN}
+# default values
+OP_SUBDOMAIN=$OP_SUBDOMAIN
+OP_ITEM_NAME=$OP_ITEM_NAME
+AWS_ROLE_ARN=$AWS_ROLE_ARN
 AWS_MFA_DURATION=${AWS_MFA_DURATION:-3600}
 
 main() {
+    parse_args "$@"
+
     verify_dependency op
     verify_dependency awsmfa
     verify_dependency aws
 
-    ensure_var "$OP_ITEM_NAME" "Missing 1Password item name as first argument or \$OP_ITEM_NAME"
-    ensure_var "$AWS_ROLE_ARN" "Missing 1Password item name as second argument or \$AWS_ROLE_ARN"
-    ensure_var "$OP_SUBDOMAIN" "Missing 1Password subdomain as \$OP_SUBDOMAIN"
+    ensure_var "$OP_SUBDOMAIN" "Missing 1Password subdomain as environment variable \$OP_SUBDOMAIN"
+    ensure_var "$OP_ITEM_NAME" "Missing value for \$OP_ITEM_NAME"
+    ensure_var "$AWS_ROLE_ARN" "Missing value for \$AWS_ROLE_ARN"
 
     assume_role=$(get_role_and_duration)
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM_NAME")
+    
     awsmfa --token-code $mfa $assume_role
+}
+
+parse_args() {
+    args=( )
+
+    # get named options
+    while (( "$#" )); do
+    case "$1" in
+    -d|--duration)
+        AWS_MFA_DURATION=$2
+        shift 2
+        ;;
+    --) # end argument parsing
+        shift
+        break
+        ;;
+    -*|--*=) # unsupported flags
+        echo
+        echo Error: Unsupported argument $1 >&2
+        usage
+        exit 1
+        ;;
+    *) # preserve positional arguments
+        args+=( "$1" )
+        shift
+        ;;
+    esac
+    done
+
+    # get remaining positional args
+    set -- "${args[@]}"
+    OP_ITEM_NAME=${1:-$OP_ITEM_NAME}
+    AWS_ROLE_ARN=${2:-$AWS_ROLE_ARN}
 }
 
 get_mfa() {
@@ -79,7 +92,7 @@ is_installed() {
 }
 
 abort() {
-    echo >&2 ABORT: $*
+    echo >&2 Error: $*
     exit 1
 }
 
@@ -99,7 +112,7 @@ usage() {
       echo "                   The number of seconds for the temporary credentials"
       echo "                   to be valid for. Default 1 hour. Max 1 hour when"
       echo "                   assuming a role."
-      echo ""
+      echo 
 }
 
 main "$@"; exit
