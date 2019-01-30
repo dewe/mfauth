@@ -12,17 +12,21 @@ Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-facto
 * `aws`: https://aws.amazon.com/cli/
 * `awsmfa`: https://pypi.org/project/awsmfa/
 
+### Setup `op`
+
+See https://support.1password.com/command-line-getting-started/
+
 ### Setup `awsmfa`
 
-The script assumes that `awsmfa` has been setup as described in [awsmfa docs, getting started](https://github.com/dcoker/awsmfa#getting-started).
+The script assumes that `awsmfa` has the default setup as described in [awsmfa docs, getting started](https://github.com/dcoker/awsmfa#getting-started).
 
-### Configure environment variables
-
-* `OP_SUBDOMAIN` - 1password subdomain for authentication, see [1password CLI docs](https://support.1password.com/command-line/#sign-in-or-out).
-* `OP_ITEM_NAME` - optional: the 1password item that has an MFA code, specified as either an [item name or uuid](https://support.1password.com/command-line/#appendix-specifying-objects).
-
-For convenience, the 1Password item name or uuid can be provided as an argument. This will override the environment variable setting.
+### Usage
 
 ```bash
-mfauth "My 1password login item name"
+mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]
 ```
+
+* `SUBDOMAIN`: The 1password account used for logging in with `op [subdomain]`
+* `OP_ITEM`: Name of the 1password item that has the two factor code configured. Copy and paste from 1password GUI.
+* `AWS_ROLE`: (Optional) Full ARN of the AWS IAM Role to assume. If empty, you will be logged in with the default identity, but no role.
+* `DURATION`: (Optional) length of AWS token session, in seconds.

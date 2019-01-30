@@ -1,16 +1,11 @@
 #!/bin/bash
 
-## TODO:
-# make assume role optional again
-# add help option
-
 set -e
 
-# variables and defaults
-SUBDOMAIN=""
+OP_SUBDOMAIN=""
 OP_ITEM=""
-AWS_ROLE_ARN=$AWS_ROLE_ARN
-AWS_MFA_DURATION=${AWS_MFA_DURATION:-3600}
+AWS_ROLE_ARN=""
+AWS_MFA_DURATION=3600
 
 main() {
     parse_args "$@"
@@ -19,12 +14,11 @@ main() {
     verify_dependency awsmfa
     verify_dependency aws
 
-    ensure_var "$SUBDOMAIN" "Missing value for \$SUBDOMAIN"
+    ensure_var "$OP_SUBDOMAIN" "Missing value for \$SUBDOMAIN"
     ensure_var "$OP_ITEM" "Missing value for \$OP_ITEM"
-    ensure_var "$AWS_ROLE_ARN" "Missing value for \$AWS_ROLE_ARN"
 
     assume_role=$(get_role_and_duration)
-    mfa=$(get_mfa "$SUBDOMAIN" "$OP_ITEM")
+    mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM")
     
     awsmfa --token-code $mfa $assume_role
 }
@@ -42,6 +36,10 @@ parse_args() {
         ;;
     -d|--duration)
         AWS_MFA_DURATION=$2
+        shift 2
+        ;;
+    -r|--role-to-assume)
+        AWS_ROLE_ARN=$2
         shift 2
         ;;
     --) # end argument parsing
@@ -63,9 +61,8 @@ parse_args() {
 
     # get remaining positional args
     set -- "${args[@]}"
-    SUBDOMAIN=$1
+    OP_SUBDOMAIN=$1
     OP_ITEM=$2
-    AWS_ROLE_ARN=${3:-$AWS_ROLE_ARN}
 }
 
 get_mfa() {
@@ -105,25 +102,24 @@ abort() {
 
 usage() {
       echo 
-      echo "Usage: mfauth [SUBDOMAIN] [OP_ITEM] [AWS_ROLE_ARN] -d [AWS_MFA_DURATION]"
+      echo "Usage: mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]"
       echo
       echo "positional arguments:"
       echo "  SUBDOMAIN     The name of the subdomain for your 1password account"
       echo "                to be used when logging in with 1password."
       echo "  OP_ITEM       Name or uuid of the 1Password item that holds the"
       echo "                two factor authentication code."
-      echo "  AWS_ROLE_ARN  ARN for the AWS IAM role to assume. Default value"
-      echo "                from AWS_ROLE_ARN environment variable, if set."
       echo
       echo "optional arguments:"
       echo "  -d DURATION, --duration DURATION"
       echo "                The number of seconds for the temporary credentials"
-      echo "                to be valid for. Default 1 hour. Max 1 hour when"
-      echo "                assuming a role."
+      echo "                to be valid for. Max 1 hour when assuming a role."
+      echo "                (Default value: 3600)"
+      echo "  -r AWS_ROLE, --role-to-assume AWS_ROLE"
+      echo "                Full ARN of the AWS IAM role you wish to assume." 
+      echo "                (Default value: None)"
       echo "  -h, --help"
       echo "                Show this help text."
-      echo ""
-      echo ""
       echo 
 }
 
