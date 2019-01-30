@@ -4,7 +4,7 @@ Stuff for AWS
 
 ## mfauth
 
-Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-factor auth with 1Password.
+Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-factor authenitcation, using 1Password for generationg the MFA code.
 
 ### Dependencies
 
