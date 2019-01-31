@@ -6,6 +6,7 @@ OP_SUBDOMAIN=""
 OP_ITEM=""
 AWS_ROLE_ARN=""
 AWS_MFA_DURATION=3600
+ROLE_SESSION_NAME="$(whoami)@$(hostname)"
 
 main() {
     parse_args "$@"
@@ -17,7 +18,7 @@ main() {
     ensure_var "$OP_SUBDOMAIN" "Missing value for \$SUBDOMAIN"
     ensure_var "$OP_ITEM" "Missing value for \$OP_ITEM"
 
-    assume_role=$(get_role_and_duration)
+    assume_role=$(get_role_session)
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM")
     
     awsmfa --token-code $mfa $assume_role
@@ -69,9 +70,9 @@ get_mfa() {
     op signin "$1" --output=raw | op get totp "$2"
 }
 
-get_role_and_duration() {
+get_role_session() {
     if [ -n "$AWS_ROLE_ARN" ]; then
-        echo --duration $AWS_MFA_DURATION $AWS_ROLE_ARN
+        echo --role-session-name $ROLE_SESSION_NAME --duration $AWS_MFA_DURATION $AWS_ROLE_ARN
     fi
 }
 
