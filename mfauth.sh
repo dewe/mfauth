@@ -21,7 +21,7 @@ main() {
     assume_role=$(get_role_session)
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM")
     
-    echo -n "Authenticating... "
+    echo -n "Authenticate... "
     awsmfa --token-code $mfa $assume_role
 }
 
