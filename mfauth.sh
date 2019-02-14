@@ -22,7 +22,7 @@ main() {
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM")
     
     echo -n "Authenticate... "
-    awsmfa --token-code $mfa $assume_role
+    awsmfa --token-code $mfa $assume_role && set_timer
 }
 
 parse_args() {
@@ -74,6 +74,13 @@ get_mfa() {
 get_role_session() {
     if [ -n "$AWS_ROLE_ARN" ]; then
         echo --role-session-name $ROLE_SESSION_NAME --duration $AWS_MFA_DURATION $AWS_ROLE_ARN
+    fi
+}
+
+set_timer() {
+    if is_installed "countdown_timer.1s.rb"; then
+        unit="s"
+        countdown_timer.1s.rb $AWS_MFA_DURATION$unit
     fi
 }
 
