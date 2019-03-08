@@ -5,7 +5,7 @@ set -e
 OP_SUBDOMAIN=""
 OP_ITEM=""
 AWS_ROLE_ARN=""
-AWS_MFA_DURATION=3600
+AWS_MFA_DURATION=21600
 ROLE_SESSION_NAME="$(whoami)@$(hostname)"
 
 main() {
@@ -22,7 +22,7 @@ main() {
     mfa=$(get_mfa "$OP_SUBDOMAIN" "$OP_ITEM")
     
     echo -n "Authenticate... "
-    awsmfa --token-code $mfa --duration $AWS_MFA_DURATION $assume_role && set_timer
+    awsmfa --token-code $mfa --duration $AWS_MFA_DURATION $assume_role && set_timer $AWS_MFA_DURATION
 }
 
 parse_args() {
@@ -79,8 +79,9 @@ get_role_session() {
 
 set_timer() {
     if is_installed "countdown_timer.1s.rb"; then
+        duration="$1"
         unit="s"
-        countdown_timer.1s.rb $AWS_MFA_DURATION$unit
+        countdown_timer.1s.rb $duration$unit
     fi
 }
 
@@ -123,7 +124,7 @@ usage() {
       echo "  -d DURATION, --duration DURATION"
       echo "                The number of seconds for the temporary credentials"
       echo "                to be valid for. Max 1 hour when assuming a role."
-      echo "                (Default value: 3600)"
+      echo "                (Default value: 21600)"
       echo "  -r AWS_ROLE, --role-to-assume AWS_ROLE"
       echo "                Full ARN of the AWS IAM role you wish to assume." 
       echo "                (Default value: None)"
