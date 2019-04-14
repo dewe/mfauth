@@ -1,4 +1,8 @@
 #!/bin/bash
+# 
+# mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]"
+#
+# See https://github.com/dewe/aws-utils
 
 set -e
 
