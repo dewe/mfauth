@@ -12,7 +12,9 @@ Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-facto
 
 ### Setup `op`
 
-See [1Password command-line tool: Getting started](https://support.1password.com/command-line-getting-started/)
+See [1Password command-line tool: Getting started](https://support.1password.com/command-line-getting-started/). 
+
+__Note__: There's an one time initial `op signin <signinaddress> <emailaddress> <secretkey>` that must be done before using mfauth.
 
 ### Setup `awsmfa`
 
