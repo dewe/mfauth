@@ -1,16 +1,14 @@
-# aws-utils
+# mfauth
 
-Stuff for AWS
-
-## mfauth
+Use 1Password for AWS MFA login in terminal.
 
 Script for signing in to [AWS CLI](https://aws.amazon.com/cli/) with multi-factor authenitcation, using 1Password for generationg the MFA code.
 
-### Dependencies
+## Dependencies
 
 * `op`: https://support.1password.com/command-line
 * `aws`: https://aws.amazon.com/cli
-* `awsmfa`: https://pypi.org/project/awsmfa
+* `awsmfa`: https://github.com/dcoker/awsmfa
 
 ### Setup `op`
 
@@ -20,7 +18,7 @@ See [1Password command-line tool: Getting started](https://support.1password.com
 
 The script assumes that `awsmfa` has the default setup as described in [awsmfa docs, getting started](https://github.com/dcoker/awsmfa#getting-started).
 
-### Usage
+## Usage
 
 ```bash
 mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]
@@ -31,7 +29,7 @@ mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]
 * `AWS_ROLE`: (Optional) Full ARN of the AWS IAM Role to assume. If empty, you will be logged in with the default identity, but no role.
 * `DURATION`: (Optional) length of AWS token session, in seconds.
 
-### Optional timer in Mac OS Menu Bar
+## Optional timer in Mac OS Menu Bar
 
 1. Get BitBar via https://getbitbar.com, or with Homebrew: `brew cask install bitbar`
 
