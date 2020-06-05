@@ -72,7 +72,8 @@ parse_args() {
 }
 
 get_mfa() {
-    op signin "$1" --output=raw | op get totp "$2"
+   eval $(op signin "$1")
+   op get totp "$2"
 }
 
 get_role_session() {
