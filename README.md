@@ -47,7 +47,7 @@ mfauth [SUBDOMAIN] [OP_ITEM] -r [AWS-ROLE] -d [DURATION]
     $ which countdown_timer.1s.rb
     /path/to/bitbar/plugins/countdown_timer.1s.rb
 
-    $ countdown_timer.1s.rb 3600h
+    $ countdown_timer.1s.rb 3600s
     $ countdown_timer.1s.rb
     00:59:55
     ```
